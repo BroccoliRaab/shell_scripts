@@ -1,0 +1,4 @@
+##!/bin/sh
+
+xbacklight "$1"10%
+xbacklight > /tmp/xobpipe

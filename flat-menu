@@ -1,0 +1,4 @@
+##!/bin/sh
+
+LIST=$(flatpak list  --columns=name,application )
+flatpak run $(echo "$LIST" | grep $( echo $( echo "$LIST" | awk '{ print $1 }'   | dmenu  ) ) |awk '{ print $2 }' )  

@@ -1,0 +1,4 @@
+pactl set-sink-volume 0 "$1"10%
+
+amixer -c 0 -M -D pulse get Master | grep -o -m1 -E "\[[0-9]+%\] \[[a-z]+\]" | tr -d [%\ ]|sed "s/off/!/; s/    on//g" >> /tmp/vol
+tail -n1 /tmp/vol > /tmp/xobpipe

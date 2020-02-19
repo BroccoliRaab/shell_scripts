@@ -1,0 +1,2 @@
+##!/bin/sh
+cat ~/.ash_history |grep -e $1| cmenu

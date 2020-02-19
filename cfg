@@ -1,0 +1,43 @@
+##!/bin/sh
+
+DIRFILE=~/.config/cfgdir
+
+if [ $1 = "-a" ]; then
+    if [ $2 ] && [ $3 ] ; then 
+        echo "$2 $3" >> $DIRFILE
+    else
+        echo Not enough arguments
+    fi
+elif [ $1 = "-r" ]; then
+    if [ $2 ] ; then 
+        grep $DIRFILE -wFve $2 |tee $DIRFILE    
+     else
+        echo Not enough arguments
+    fi
+elif [ $1 = "-l" ] ; then
+    cat $DIRFILE | awk '{print "\033[92m" $1 " " "\033[35m" $2 "\033[0m"}'
+elif [ $1 = "-h" ] || [ ! $1 ] ; then
+	echo "USAGE: cfg [ENTRY][-a ENTRY DIR][-r ENTRY][-l][-h]\n"
+elif [ $1 = "-d" ] ; then 
+    if [ $2 ] ; then
+        FILE=$(grep $DIRFILE -wFe $2 |awk  '{print $2}')
+        if [ $FILE ] ; then
+            echo $FILE
+        else
+            echo "No entry for $2"
+        fi
+    else
+        echo Not enough arguments
+    fi
+else
+    if [ $1 ] ; then 
+        FILE=$(grep $DIRFILE -wFe $1 |awk  '{print $2}')
+        if [ $FILE ] ; then
+            nvim $FILE
+        else
+            echo "No entry for $1"
+        fi
+    else
+        echo Not enough arguments
+    fi
+fi

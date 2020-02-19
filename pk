@@ -1,0 +1,2 @@
+##!/bin/sh
+sudo apk add $(apk search -q $1 | cmenu)
