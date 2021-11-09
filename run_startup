@@ -1,6 +1,0 @@
-##!/bin/sh
-
-cd ~/.config/startup
-
-./run_root
-./startup.sh
