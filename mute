@@ -1,4 +1,0 @@
-pactl set-sink-mute 0 toggle
-
-amixer -c 0 -M -D pulse get Master | grep -o -m1 -E "\[[0-9]+%\] \[[a-z]+\]" | tr -d [%\ ]|sed "s/off/!/; s/    on//g" >> /tmp/vol 
-tail -n1 /tmp/vol > /tmp/xobpipe
