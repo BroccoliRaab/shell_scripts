@@ -1,43 +1,50 @@
 #!/bin/sh
 
-DIRFILE=~/.config/cfgdir
-
-if [ $1 = "-a" ]; then
-    if [ $2 ] && [ $3 ] ; then 
-        echo "$2 $3" >> $DIRFILE
-    else
-        echo Not enough arguments
-    fi
-elif [ $1 = "-r" ]; then
-    if [ $2 ] ; then 
-        grep $DIRFILE -wFve $2 |tee $DIRFILE    
-     else
-        echo Not enough arguments
-    fi
-elif [ $1 = "-l" ] ; then
-    cat $DIRFILE | awk '{print "\033[92m" $1 " " "\033[35m" $2 "\033[0m"}'
-elif [ $1 = "-h" ] || [ ! $1 ] ; then
-	echo "USAGE: cfg [ENTRY][-a ENTRY DIR][-r ENTRY][-l][-h]\n"
-elif [ $1 = "-d" ] ; then 
-    if [ $2 ] ; then
-        FILE=$(grep $DIRFILE -wFe $2 |awk  '{print $2}')
-        if [ $FILE ] ; then
-            echo $FILE
-        else
-            echo "No entry for $2"
-        fi
-    else
-        echo Not enough arguments
-    fi
-else
-    if [ $1 ] ; then 
-        FILE=$(grep $DIRFILE -wFe $1 |awk  '{print $2}')
-        if [ $FILE ] ; then
-            nvim $FILE
-        else
-            echo "No entry for $1"
-        fi
-    else
-        echo Not enough arguments
-    fi
+if ! [ "$EDITOR" ]; then
+   echo "EDITOR not defined"
+   exit
 fi
+
+if ! [ "$CFGTAB" ]; then
+    CFGTAB="$HOME"/.config/cfgtab
+fi
+
+case "$1" in 
+    "-a")
+        if [ "$2" ] && [ "$3" ] ; then
+            if [ '$1 == "'"$3"'"' ] ; then
+                echo "$2 $3" >> "$CFGTAB"
+            else
+                echo "Entry $1 already exists"
+            fi
+        else
+            echo "Not enough arguments"
+        fi
+        ;;
+    "-r")
+        if [ "$2" ]; then 
+            awk '$1 !="'"$2"'"'  "$CFGTAB" > "$CFGTAB.new"
+            mv "$CFGTAB.new" "$CFGTAB"
+        else
+            echo "Not enough arguments"
+        fi
+        ;;
+    "-l")
+        awk '{print "\033[92m" $1 " " "\033[35m" $2 "\033[0m"}' "$CFGTAB"
+        ;;
+    '')
+        echo "Not enough arguments"
+        ;;
+    "-h")
+        echo "USAGE: cfg [ENTRY][-a ENTRY PATH][-r ENTRY][-l][-h]"
+        ;;
+    *)
+        FILE=$(  awk '$1 == "'"$1"'" {print $2} ' "$CFGTAB" )
+        if [ "$FILE" ] ; then
+            eval "$EDITOR" "$FILE"
+        else
+            echo "No such entry: $1"
+        fi
+        ;;
+esac
+
