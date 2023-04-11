@@ -1,0 +1,11 @@
+#!/bin/sh
+echo "$@" | tr " " "\n" > .rn.orig
+cp .rn.orig .rn.new
+
+${EDITOR} .rn.new
+
+paste .rn.orig .rn.new |
+    while read line; do
+        sh -c "mv $line"
+    done
+rm .rn.new .rn.orig
